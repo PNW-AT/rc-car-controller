@@ -2,7 +2,7 @@
 
 #include "OneAnalogJoystick.h"
 
-OneAnalogJoystick stick = OneAnalogJoystick(A0, D0, D5, D6, D7);
+OneAnalogJoystick stick = OneAnalogJoystick(A0, D5, D0, D7, D6);
 
 float x = 0;
 float rz = 0;
@@ -25,10 +25,11 @@ void WifiDataToSend()
 
 void configWifi()
 {
-    EWD::mode = EWD::Mode::createAP;
-    EWD::APPort = 25001;
-    EWD::APName = "rccar001";
-    EWD::APPassword = "password001";
+    EWD::mode = EWD::Mode::connectToNetwork;
+    EWD::routerName = "rccar001";
+    EWD::routerPassword = "password001";
+    EWD::routerPort = 25001;
+    EWD::communicateWithIP = "192.168.4.1";
 }
 
 void setup()
@@ -40,8 +41,8 @@ void setup()
 
 void loop()
 {
-    x = stick.readY();
-    rz = stick.readX();
+    x = constrain((stick.readY()-525)/450.0,-1,1);
+    rz = constrain((stick.readX()-573)/450.0,-1,1);
     EWD::runWifiCommunication();
     if (EWD::newData()) {
         Serial.println(batteryVoltage);
